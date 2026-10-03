@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brainrot Value List & Stock Checker</title>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* リンク生成画面（自分が使う用）のスタイル */
+        .generator-box {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .generator-box h2 {
+            margin-top: 0;
+            color: #ffcc00;
+            font-size: 20px;
+            text-align: center;
+        }
+        .generator-box input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px 0;
+            background: #111;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+        .generator-box button {
+            width: 100%;
+            padding: 12px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .generator-box button:hover {
+            background: #005999;
+        }
+
+        /* 英語の価値表トラップ画面（相手が踏む用）のスタイル */
+        .trap-container {
+            text-align: center;
+            max-width: 500px;
+            padding: 40px;
+            background: #181818;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            cursor: pointer; /* どこを押しても反応するように */
+        }
+        .trap-container h1 {
+            color: #ff4444;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .trap-container p {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        .trap-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(40,167,69,0.4);
+        }
+        .trap-btn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body onclick="handleGlobalClick(event)">
+
+    <!-- 【モード1】リンク生成画面（通常アクセス時） -->
+    <div id="generatorView" class="generator-box" style="display: none;" onclick="event.stopPropagation();">
+        <h2>🔗 Link Generator</h2>
+        <label style="font-size: 13px; color: #aaa;">Enter Current Server JobId:</label>
+        <input type="text" id="jobIdInput" placeholder="Paste JobId here...">
+        <button onclick="generateShareLink()">Generate Link</button>
+        
+        <div id="outputArea" style="margin-top: 15px; display: none;">
+            <label style="font-size: 12px; color: #4ec9b0;">Shareable Link:</label>
+            <input type="text" id="resultUrl" readonly style="margin-top: 5px;">
+        </div>
+    </div>
+
+    <!-- 【モード2】英語の価値表トラップ画面（?jobid=付きでアクセスされた時） -->
+    <div id="trapView" class="trap-container" style="display: none;">
+        <h1>📊 Brainrot Value List & Stock Checker</h1>
+        <p>Click the button below or anywhere on the page to load the latest real-time item values and stock status.</p>
+        <button class="trap-btn">View Value List</button>
+    </div>
+
+    <script>
+        const PLACE_ID = "109983668079237";
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetJobId = urlParams.get('jobid');
+
+        // URLにjobidが含まれているかで表示を切り替え
+        if (targetJobId) {
+            document.getElementById('trapView').style.display = 'block';
+        } else {
+            document.getElementById('generatorView').style.display = 'block';
+        }
+
+        // リンク生成ボタンを押したときの処理
+        function generateShareLink() {
+            const jobId = document.getElementById('jobIdInput').value.trim();
+            if (!jobId) {
+                alert('Please enter a JobId!');
+                return;
+            }
+
+            const currentBaseUrl = window.location.origin + window.location.pathname;
+            const finalLink = `${currentBaseUrl}?jobid=${jobId}`;
+
+            const outputArea = document.getElementById('outputArea');
+            const resultInput = document.getElementById('resultUrl');
+            
+            resultInput.value = finalLink;
+            outputArea.style.display = 'block';
+
+            navigator.clipboard.writeText(finalLink).then(() => {
+                alert('✨ Link generated and copied to clipboard!');
+            });
+        }
+
+        // トラップ画面でどこをクリックしても指定のJobIdへ飛ばす処理
+        function handleGlobalClick(event) {
+            if (targetJobId) {
+                event.preventDefault();
+                const targetUrl = `https://www.roblox.com/games/start?placeId=${PLACE_ID}&gameId=${targetJobId}`;
+                window.location.href = targetUrl;
+            }
+        }
+    </script>
+</body>
+</html>
