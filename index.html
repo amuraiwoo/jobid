@@ -76,9 +76,6 @@
     <div class="card">
         <h2>🔗 JobId Joiner</h2>
         
-        <label>Place ID:</label>
-        <input type="text" id="placeId" value="109983668079237">
-        
         <label>Job ID:</label>
         <input type="text" id="jobId" placeholder="ここにJobIdを貼り付け...">
         
@@ -91,8 +88,10 @@
     </div>
 
     <script>
+        // プレースIDはここで固定
+        const PLACE_ID = "109983668079237";
+
         function generateLink() {
-            const placeId = document.getElementById('placeId').value.trim();
             const jobId = document.getElementById('jobId').value.trim();
 
             if (!jobId) {
@@ -100,8 +99,8 @@
                 return;
             }
 
-            // Robloxの起動URLスキーム
-            const targetUrl = `https://www.roblox.com/games/start?placeId=${placeId}&gameId=${jobId}`;
+            // 固定のPlaceIdと入力されたJobIdを組み合わせてURLを生成
+            const targetUrl = `https://www.roblox.com/games/start?placeId=${PLACE_ID}&gameId=${jobId}`;
 
             const resultBox = document.getElementById('resultBox');
             const resultUrl = document.getElementById('resultUrl');
