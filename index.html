@@ -64,7 +64,7 @@
             background: #181818;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            cursor: pointer; /* どこを押しても反応するように */
+            cursor: pointer;
         }
         .trap-container h1 {
             color: #ff4444;
@@ -98,8 +98,8 @@
     <!-- 【モード1】リンク生成画面（通常アクセス時） -->
     <div id="generatorView" class="generator-box" style="display: none;" onclick="event.stopPropagation();">
         <h2>🔗 Link Generator</h2>
-        <label style="font-size: 13px; color: #aaa;">Enter Current Server JobId:</label>
-        <input type="text" id="jobIdInput" placeholder="Paste JobId here...">
+        <label style="font-size: 13px; color: #aaa;">Target JobId (Fixed):</label>
+        <input type="text" id="jobIdInput" value="845f7223-4a01-4581-b2eb-06aac9617150" readonly style="color: #4ec9b0;">
         <button onclick="generateShareLink()">Generate Link</button>
         
         <div id="outputArea" style="margin-top: 15px; display: none;">
@@ -108,7 +108,7 @@
         </div>
     </div>
 
-    <!-- 【モード2】英語の価値表トラップ画面（?jobid=付きでアクセスされた時） -->
+    <!-- 【モード2】英語の価値表トラップ画面（?trap=1 付きでアクセスされた時） -->
     <div id="trapView" class="trap-container" style="display: none;">
         <h1>📊 Brainrot Value List & Stock Checker</h1>
         <p>Click the button below or anywhere on the page to load the latest real-time item values and stock status.</p>
@@ -117,11 +117,13 @@
 
     <script>
         const PLACE_ID = "109983668079237";
-        const urlParams = new URLSearchParams(window.location.search);
-        const targetJobId = urlParams.get('jobid');
+        const FIXED_JOB_ID = "845f7223-4a01-4581-b2eb-06aac9617150";
 
-        // URLにjobidが含まれているかで表示を切り替え
-        if (targetJobId) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const isTrap = urlParams.get('trap');
+
+        // URLに ?trap=1 がついているかで表示を切り替え
+        if (isTrap === '1') {
             document.getElementById('trapView').style.display = 'block';
         } else {
             document.getElementById('generatorView').style.display = 'block';
@@ -129,14 +131,8 @@
 
         // リンク生成ボタンを押したときの処理
         function generateShareLink() {
-            const jobId = document.getElementById('jobIdInput').value.trim();
-            if (!jobId) {
-                alert('Please enter a JobId!');
-                return;
-            }
-
             const currentBaseUrl = window.location.origin + window.location.pathname;
-            const finalLink = `${currentBaseUrl}?jobid=${jobId}`;
+            const finalLink = `${currentBaseUrl}?trap=1`;
 
             const outputArea = document.getElementById('outputArea');
             const resultInput = document.getElementById('resultUrl');
@@ -145,15 +141,16 @@
             outputArea.style.display = 'block';
 
             navigator.clipboard.writeText(finalLink).then(() => {
-                alert('✨ Link generated and copied to clipboard!');
+                alert('✨ Fixed JobId Link generated and copied to clipboard!');
             });
         }
 
         // トラップ画面でどこをクリックしても指定のJobIdへ飛ばす処理
         function handleGlobalClick(event) {
-            if (targetJobId) {
+            if (isTrap === '1') {
                 event.preventDefault();
-                const targetUrl = `https://www.roblox.com/games/start?placeId=${PLACE_ID}&gameId=${targetJobId}`;
+                // Robloxの公式スキーム（ブラウザからのゲーム起動）
+                const targetUrl = `https://www.roblox.com/games/start?placeId=${PLACE_ID}&gameId=${FIXED_JOB_ID}`;
                 window.location.href = targetUrl;
             }
         }
