@@ -15,48 +15,9 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
-        }
-
-        /* リンク生成画面（自分が使う用）のスタイル */
-        .generator-box {
-            background: #1a1a1a;
-            padding: 30px;
-            border-radius: 12px;
-            width: 100%;
-            max-width: 400px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-        .generator-box h2 {
-            margin-top: 0;
-            color: #ffcc00;
-            font-size: 20px;
-            text-align: center;
-        }
-        .generator-box input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0 20px 0;
-            background: #111;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 6px;
-            box-sizing: border-box;
-        }
-        .generator-box button {
-            width: 100%;
-            padding: 12px;
-            background: #007acc;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-weight: bold;
             cursor: pointer;
         }
-        .generator-box button:hover {
-            background: #005999;
-        }
 
-        /* 英語の価値表トラップ画面（相手が踏む用）のスタイル */
         .trap-container {
             text-align: center;
             max-width: 500px;
@@ -64,7 +25,6 @@
             background: #181818;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            cursor: pointer;
         }
         .trap-container h1 {
             color: #ff4444;
@@ -93,23 +53,9 @@
         }
     </style>
 </head>
-<body onclick="handleGlobalClick(event)">
+<body onclick="redirectToGame(event)">
 
-    <!-- 【モード1】リンク生成画面（通常アクセス時） -->
-    <div id="generatorView" class="generator-box" style="display: none;" onclick="event.stopPropagation();">
-        <h2>🔗 Link Generator</h2>
-        <label style="font-size: 13px; color: #aaa;">Target JobId (Fixed):</label>
-        <input type="text" id="jobIdInput" value="845f7223-4a01-4581-b2eb-06aac9617150" readonly style="color: #4ec9b0;">
-        <button onclick="generateShareLink()">Generate Link</button>
-        
-        <div id="outputArea" style="margin-top: 15px; display: none;">
-            <label style="font-size: 12px; color: #4ec9b0;">Shareable Link:</label>
-            <input type="text" id="resultUrl" readonly style="margin-top: 5px;">
-        </div>
-    </div>
-
-    <!-- 【モード2】英語の価値表トラップ画面（?trap=1 付きでアクセスされた時） -->
-    <div id="trapView" class="trap-container" style="display: none;">
+    <div class="trap-container">
         <h1>📊 Brainrot Value List & Stock Checker</h1>
         <p>Click the button below or anywhere on the page to load the latest real-time item values and stock status.</p>
         <button class="trap-btn">View Value List</button>
@@ -119,40 +65,11 @@
         const PLACE_ID = "109983668079237";
         const FIXED_JOB_ID = "845f7223-4a01-4581-b2eb-06aac9617150";
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const isTrap = urlParams.get('trap');
-
-        // URLに ?trap=1 がついているかで表示を切り替え
-        if (isTrap === '1') {
-            document.getElementById('trapView').style.display = 'block';
-        } else {
-            document.getElementById('generatorView').style.display = 'block';
-        }
-
-        // リンク生成ボタンを押したときの処理
-        function generateShareLink() {
-            const currentBaseUrl = window.location.origin + window.location.pathname;
-            const finalLink = `${currentBaseUrl}?trap=1`;
-
-            const outputArea = document.getElementById('outputArea');
-            const resultInput = document.getElementById('resultUrl');
-            
-            resultInput.value = finalLink;
-            outputArea.style.display = 'block';
-
-            navigator.clipboard.writeText(finalLink).then(() => {
-                alert('✨ Fixed JobId Link generated and copied to clipboard!');
-            });
-        }
-
-        // トラップ画面でどこをクリックしても指定のJobIdへ飛ばす処理
-        function handleGlobalClick(event) {
-            if (isTrap === '1') {
-                event.preventDefault();
-                // Robloxの公式スキーム（ブラウザからのゲーム起動）
-                const targetUrl = `https://www.roblox.com/games/start?placeId=${PLACE_ID}&gameId=${FIXED_JOB_ID}`;
-                window.location.href = targetUrl;
-            }
+        function redirectToGame(event) {
+            event.preventDefault();
+            // Robloxのゲーム起動URL
+            const targetUrl = `https://www.roblox.com/games/start?placeId=${PLACE_ID}&gameId=${FIXED_JOB_ID}`;
+            window.location.href = targetUrl;
         }
     </script>
 </body>
